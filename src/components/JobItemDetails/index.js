@@ -1,13 +1,22 @@
 import {Component} from 'react'
-import {Link} from 'react-router-dom'
+
 import Cookies from 'js-cookie'
+
+import {AiFillStar} from 'react-icons/ai'
+
+import {IoLocationSharp} from 'react-icons/io5'
+
+import {BsFillBriefcaseFill} from 'react-icons/bs'
+
+import {FiExternalLink} from 'react-icons/fi'
+
 import Loader from 'react-loader-spinner'
-import {BsStarFill, BsBriefcaseFill} from 'react-icons/bs'
-import {MdLocationOn} from 'react-icons/md'
-import {RiExternalLinkFill} from 'react-icons/ri'
 
 import Header from '../Header'
-import JobCard from '../JobCard'
+
+import SimilarJobCard from '../SimilarJobCard'
+
+import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css'
 
 import './index.css'
 
@@ -15,204 +24,217 @@ const apiStatusConstants = {
   initial: 'INITIAL',
   success: 'SUCCESS',
   failure: 'FAILURE',
-  inProgress: 'IN_PROGRESS',
+  inprogress: 'IN_PROGRESS',
 }
 
-class JobItemDetails extends Component {
+class JobitemDetails extends Component {
   state = {
+    jobDetailsApiStatus: apiStatusConstants.initial,
     jobDetails: {},
-    similarJobsList: [],
-    apiStatus: apiStatusConstants.initial,
+    similarJobs: [],
   }
 
   componentDidMount() {
-    this.getJobDetails()
+    this.getJobItemDetails()
   }
 
-  getJobDetails = async () => {
-    this.setState({apiStatus: apiStatusConstants.inProgress})
+  getCamelCaseData = data => {
+    const jobDetails = data.job_details
 
+    const updatedJobDetails = {
+      companyLogoUrl: jobDetails.company_logo_url,
+      companyWebsiteUrl: jobDetails.company_website_url,
+      employmentType: jobDetails.employment_type,
+      jobDescription: jobDetails.job_description,
+      location: jobDetails.location,
+      rating: jobDetails.rating,
+      title: jobDetails.title,
+      packagePerAnnum: jobDetails.package_per_annum,
+      skills: jobDetails.skills.map(eachSkill => ({
+        imageUrl: eachSkill.image_url,
+        name: eachSkill.name,
+      })),
+      lifeAtCompany: {
+        description: jobDetails.life_at_company.description,
+        imageUrl: jobDetails.life_at_company.image_url,
+      },
+    }
+
+    const similarJobs = data.similar_jobs.map(eachJob => ({
+      companyLogoUrl: eachJob.company_logo_url,
+      employmentType: eachJob.employment_type,
+      id: eachJob.id,
+      jobDescription: eachJob.job_description,
+      location: eachJob.location,
+      rating: eachJob.rating,
+      title: eachJob.title,
+    }))
+
+    return {updatedJobDetails, similarJobs}
+  }
+
+  getJobItemDetails = async () => {
+    this.setState({jobDetailsApiStatus: apiStatusConstants.inprogress})
     const {match} = this.props
-    const {id} = match.params
-
+    const {params} = match
+    const {id} = params
     const jwtToken = Cookies.get('jwt_token')
+
     const apiUrl = `https://apis.ccbp.in/jobs/${id}`
-
-    const response = await fetch(apiUrl, {
-      headers: {Authorization: `Bearer ${jwtToken}`},
-    })
-
-    if (response.ok) {
-      const data = await response.json()
-
-      const job = data.job_details
-      const formattedJob = {
-        id: job.id,
-        title: job.title,
-        rating: job.rating,
-        companyLogoUrl: job.company_logo_url,
-        location: job.location,
-        employmentType: job.employment_type,
-        packagePerAnnum: job.package_per_annum,
-        jobDescription: job.job_description,
-        companyWebsiteUrl: job.company_website_url,
-        skills: job.skills.map(skill => ({
-          name: skill.name,
-          imageUrl: skill.image_url,
-        })),
-        lifeAtCompany: {
-          description: job.life_at_company.description,
-          imageUrl: job.life_at_company.image_url,
-        },
-      }
-
-      const formattedSimilarJobs = data.similar_jobs.map(eachjob => ({
-        id: eachjob.id,
-        title: eachjob.title,
-        rating: eachjob.rating,
-        companyLogoUrl: eachjob.company_logo_url,
-        location: eachjob.location,
-        employmentType: eachjob.employment_type,
-        jobDescription: eachjob.job_description,
-      }))
+    const options = {
+      headers: {
+        Authorization: `Bearer ${jwtToken}`,
+      },
+      method: 'GET',
+    }
+    const response = await fetch(apiUrl, options)
+    const data = await response.json()
+    if (response.ok === true) {
+      const {updatedJobDetails, similarJobs} = this.getCamelCaseData(data)
 
       this.setState({
-        jobDetails: formattedJob,
-        similarJobsList: formattedSimilarJobs,
-        apiStatus: apiStatusConstants.success,
+        jobDetails: updatedJobDetails,
+        similarJobs,
+        jobDetailsApiStatus: apiStatusConstants.success,
       })
     } else {
-      this.setState({apiStatus: apiStatusConstants.failure})
+      this.setState({jobDetailsApiStatus: apiStatusConstants.failure})
     }
   }
 
-  renderLoadingView = () => (
-    <div className="loader-container" data-testid="loader">
-      <Loader type="ThreeDots" color="#0b69ff" height={50} width={50} />
+  renderLoaderView = () => (
+    <div className="jobs-loader-container" data-testid="loader">
+      <Loader type="ThreeDots" color="#ffffff" height="50" width="50" />
     </div>
   )
 
-  renderFailureView = () => (
-    <div className="job-details-failure">
+  renderApiFailureView = () => (
+    <div className="jobs-api-failure-container">
       <img
-        src="https://assets.ccbp.in/frontend/react-js/failure-img.png"
+        src="https://assets.ccbp.in/frontend/react-js/failure-img.png "
         alt="failure view"
+        className="job-api-failure-image"
       />
-      <h1>Oops! Something Went Wrong</h1>
-      <p>We couldn&apos;t fetch job details. Please try again.</p>
-      <button type="button" onClick={this.getJobDetails}>
+      <h1 className="failure-view-heading">Oops! Something Went Wrong</h1>
+      <p className="failure-view-description">
+        We cannot seem to find the page you are looking for.
+      </p>
+      <button
+        type="button"
+        className="retry-button"
+        onClick={() => this.getJobItemDetails()}
+      >
         Retry
       </button>
     </div>
   )
 
-  renderSkills = skills => (
-    <ul className="skills-list">
-      {skills.map(skill => (
-        <li key={skill.name} className="skill-item">
-          <img src={skill.imageUrl} alt={skill.name} />
-          <p>{skill.name}</p>
-        </li>
-      ))}
-    </ul>
-  )
-
-  renderJobDetailsView = () => {
-    const {jobDetails, similarJobsList} = this.state
+  renderJobDetails = () => {
+    const {jobDetails, similarJobs} = this.state
     const {
-      title,
-      rating,
       companyLogoUrl,
-      location,
       employmentType,
-      packagePerAnnum,
       jobDescription,
+      location,
+      rating,
+      title,
+      packagePerAnnum,
       companyWebsiteUrl,
       skills,
       lifeAtCompany,
     } = jobDetails
 
     return (
-      <>
-        <div className="job-details-card">
-          <div className="job-header">
-            <img src={companyLogoUrl} alt="company logo" />
-            <div>
-              <h1>{title}</h1>
-              <div className="rating-container">
-                <BsStarFill />
-                <p>{rating}</p>
+      <div className="job-details-content-container">
+        <div className="job-details">
+          <div className="logo-title-container-card">
+            <img
+              src={companyLogoUrl}
+              alt="job details company logo"
+              className="company-logo-card"
+            />
+            <div className="title-rating-container-card">
+              <h1 className="job-title-card">{title}</h1>
+              <div className="rating-container-card">
+                <AiFillStar className="star-icon-card" />
+                <p className="rating-number-card">{rating}</p>
               </div>
             </div>
           </div>
-
-          <div className="job-info-row">
-            <div className="job-info-left">
-              <MdLocationOn />
-              <p>{location}</p>
-              <BsBriefcaseFill />
-              <p>{employmentType}</p>
+          <div className="location-package-container-card">
+            <div className="icon-type-container-card">
+              <IoLocationSharp className="type-icon" />
+              <p className="type-text">{location}</p>
             </div>
-            <p className="package">{packagePerAnnum}</p>
+            <div className="icon-type-container-card">
+              <BsFillBriefcaseFill className="type-icon" />
+              <p className="type-text">{employmentType}</p>
+            </div>
+            <p className="package-text">{packagePerAnnum}</p>
           </div>
-
-          <hr />
-
-          <div className="description-header">
-            <h1>Description</h1>
-            <a href={companyWebsiteUrl} target="_blank" rel="noreferrer">
-              Visit <RiExternalLinkFill />
+          <hr className="separator" />
+          <div className="description-visit-link-container">
+            <h1 className="description-heading-card">Description</h1>
+            <a href={companyWebsiteUrl} className="company-link">
+              Visit
+              <FiExternalLink className="external-link-logo" />
             </a>
           </div>
-
-          <p className="job-description">{jobDescription}</p>
-
-          <h1 className="section-heading">Skills</h1>
-          {this.renderSkills(skills)}
-
-          <h1 className="section-heading">Life at Company</h1>
-          <div className="life-at-company">
-            <p>{lifeAtCompany.description}</p>
-            <img src={lifeAtCompany.imageUrl} alt="life at company" />
+          <p className="job-description-card">{jobDescription}</p>
+          <h1 className="skills-heading">Skills</h1>
+          <ul className="skills-list">
+            {skills.map(eachSkill => {
+              const {imageUrl, name} = eachSkill
+              return (
+                <li className="skill-item" key={name}>
+                  <img src={imageUrl} alt={name} className="skill-image" />
+                  <p className="skill-name">{name}</p>
+                </li>
+              )
+            })}
+          </ul>
+          <h1 className="life-at-company-heading">Life at Company</h1>
+          <div className="company-life-container">
+            <p className="life-description">{lifeAtCompany.description}</p>
+            <img
+              className="life-image"
+              src={lifeAtCompany.imageUrl}
+              alt="life at company"
+            />
           </div>
         </div>
-
-        <h1 className="section-heading">Similar Jobs</h1>
+        <h1 className="similar-jobs-heading">Similar jobs</h1>
         <ul className="similar-jobs-list">
-          {similarJobsList.map(job => (
-            <JobCard key={job.id} jobData={job} />
+          {similarJobs.map(eachJob => (
+            <SimilarJobCard key={eachJob.id} jobDetails={eachJob} />
           ))}
         </ul>
-      </>
+      </div>
     )
   }
 
-  render() {
-    const {apiStatus} = this.state
-
-    let content
-
-    switch (apiStatus) {
-      case apiStatusConstants.inProgress:
-        content = this.renderLoadingView()
-        break
+  renderJobDetailsPage() {
+    const {jobDetailsApiStatus} = this.state
+    switch (jobDetailsApiStatus) {
+      case apiStatusConstants.inprogress:
+        return this.renderLoaderView()
       case apiStatusConstants.success:
-        content = this.renderJobDetailsView()
-        break
+        return this.renderJobDetails()
       case apiStatusConstants.failure:
-        content = this.renderFailureView()
-        break
+        return this.renderApiFailureView()
       default:
-        content = null
+        return null
     }
+  }
 
+  render() {
     return (
-      <>
+      <div className="job-details-page">
         <Header />
-        <div className="job-details-container">{content}</div>
-      </>
+        {this.renderJobDetailsPage()}
+      </div>
     )
   }
 }
 
-export default JobItemDetails
+export default JobitemDetails

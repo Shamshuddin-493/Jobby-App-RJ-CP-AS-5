@@ -1,63 +1,56 @@
-import {Link} from 'react-router-dom'
-import {MdLocationOn} from 'react-icons/md'
-import {BsBriefcaseFill, BsStarFill} from 'react-icons/bs'
-
 import './index.css'
+import {BsStarFill} from 'react-icons/bs'
+import {GoLocation} from 'react-icons/go'
+import {MdWork} from 'react-icons/md'
+import {Link} from 'react-router-dom'
 
-const JobCard = props => {
-  const {jobData} = props
-
+const JobCard = ({jobDetails}) => {
   const {
     id,
+    companyLogoUrl,
     title,
     rating,
-    companyLogoUrl,
     location,
     employmentType,
     packagePerAnnum,
     jobDescription,
-  } = jobData
+  } = jobDetails
 
   return (
-    <li className="job-item">
+    <li className="job-card">
       <Link to={`/jobs/${id}`} className="job-link">
-        {/* TOP SECTION */}
         <div className="job-header">
           <img
             src={companyLogoUrl}
             alt="company logo"
             className="company-logo"
           />
-          <div>
+          <div className="job-title-rating">
             <h1 className="job-title">{title}</h1>
-            <div className="rating-container">
+            <div className="job-rating">
               <BsStarFill className="star-icon" />
-              <p className="rating">{rating}</p>
+              <p>{rating}</p>
             </div>
           </div>
         </div>
 
-        {/* INFO ROW */}
-        <div className="job-info">
-          <div className="job-info-left">
-            <div className="icon-text">
-              <MdLocationOn />
+        <div className="job-details">
+          <div className="job-location-type">
+            <div className="location">
+              <GoLocation className="location-icon" />
               <p>{location}</p>
             </div>
-            <div className="icon-text">
-              <BsBriefcaseFill />
+            <div className="employment-type">
+              <MdWork className="employment-icon" />
               <p>{employmentType}</p>
             </div>
           </div>
-
           <p className="package">{packagePerAnnum}</p>
         </div>
 
-        <hr />
-
-        {/* DESCRIPTION */}
+        <hr className="separator" />
         <h1 className="description-heading">Description</h1>
-        <p className="description">{jobDescription}</p>
+        <p className="job-description">{jobDescription}</p>
       </Link>
     </li>
   )

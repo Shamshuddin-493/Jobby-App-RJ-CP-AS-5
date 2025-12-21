@@ -1,113 +1,112 @@
-import {BsSearch} from 'react-icons/bs'
 import './index.css'
 
+const employmentTypesList = [
+  {
+    label: 'Full Time',
+    employmentTypeId: 'FULLTIME',
+  },
+  {
+    label: 'Part Time',
+    employmentTypeId: 'PARTTIME',
+  },
+  {
+    label: 'Freelance',
+    employmentTypeId: 'FREELANCE',
+  },
+  {
+    label: 'Internship',
+    employmentTypeId: 'INTERNSHIP',
+  },
+]
+
+const salaryRangesList = [
+  {
+    salaryRangeId: '1000000',
+    label: '10 LPA and above',
+  },
+  {
+    salaryRangeId: '2000000',
+    label: '20 LPA and above',
+  },
+  {
+    salaryRangeId: '3000000',
+    label: '30 LPA and above',
+  },
+  {
+    salaryRangeId: '4000000',
+    label: '40 LPA and above',
+  },
+]
+
 const FiltersGroup = props => {
-  const {
-    searchInput,
-    changeSearchInput,
-    enterSearchInput,
-    employmentTypesList,
-    salaryRangesList,
-    changeEmployment,
-    activeEmployment, // ARRAY
-    changeSalary,
-    activeSalaryId,
-  } = props
+  const renderEmployementTypesList = () => {
+    const {updateEmploymentTypesChecked} = props
 
-  /* ---------- SEARCH ---------- */
-
-  const onChangeSearchInput = event => {
-    changeSearchInput(event.target.value)
-  }
-
-  const onEnterSearchInput = event => {
-    if (event.key === 'Enter') {
-      enterSearchInput()
-    }
-  }
-
-  const renderSearchInput = () => (
-    <div className="search-input-container">
-      <input
-        type="search"
-        value={searchInput}
-        className="search-input"
-        placeholder="Search"
-        onChange={onChangeSearchInput}
-        onKeyDown={onEnterSearchInput}
-      />
-      <BsSearch className="search-icon" onClick={enterSearchInput} />
-    </div>
-  )
-
-  /* ---------- EMPLOYMENT TYPES (MULTI SELECT) ---------- */
-
-  const renderEmploymentTypesList = () =>
-    employmentTypesList.map(type => {
-      const isChecked = activeEmployment.includes(type.employmentTypeId)
-
-      const onClickEmployment = () => {
-        changeEmployment(type.employmentTypeId)
-      }
+    return employmentTypesList.map(eachType => {
+      const updateTypesList = () =>
+        updateEmploymentTypesChecked(eachType.employmentTypeId)
 
       return (
-        <li className="employment-item" key={type.employmentTypeId}>
+        <li className="filters-list-item" key={eachType.employmentTypeId}>
           <input
             type="checkbox"
-            id={type.employmentTypeId}
-            checked={isChecked}
-            onChange={onClickEmployment}
+            className="checkbox-input"
+            id={eachType.employmentTypeId}
+            onChange={updateTypesList}
           />
-          <label htmlFor={type.employmentTypeId}>{type.label}</label>
+          <label htmlFor={eachType.employmentTypeId} className="filter-label">
+            {eachType.label}
+          </label>
         </li>
       )
     })
+  }
 
   const renderEmploymentTypes = () => (
-    <div className="employment-container">
+    <>
       <h1 className="filter-heading">Type of Employment</h1>
-      <ul className="employment-list">{renderEmploymentTypesList()}</ul>
-    </div>
+      <ul className="filters-list">{renderEmployementTypesList()}</ul>
+    </>
   )
 
-  /* ---------- SALARY RANGE (SINGLE SELECT) ---------- */
+  const renderSalaryRangesList = () => {
+    const {updateSalaryRangeId, activeSalaryRangeId} = props
 
-  const renderSalaryRangesList = () =>
-    salaryRangesList.map(range => {
-      const isChecked = activeSalaryId === range.salaryRangeId
+    return salaryRangesList.map(eachRange => {
+      const onChangeRange = () => updateSalaryRangeId(eachRange.salaryRangeId)
 
-      const onClickSalary = () => {
-        changeSalary(range.salaryRangeId)
-      }
+      const isChecked = eachRange.salaryRangeId === activeSalaryRangeId
 
       return (
-        <li className="salary-item" key={range.salaryRangeId}>
+        <li className="filters-list-item" key={eachRange.salaryRangeId}>
           <input
             type="radio"
-            id={range.salaryRangeId}
-            name="salary"
+            className="checkbox-input"
+            id={eachRange.salaryRangeId}
+            name="salary ranges"
+            onChange={onChangeRange}
             checked={isChecked}
-            onChange={onClickSalary}
           />
-          <label htmlFor={range.salaryRangeId}>{range.label}</label>
+          <label htmlFor={eachRange.salaryRangeId} className="filter-label">
+            {eachRange.label}
+          </label>
         </li>
       )
     })
+  }
 
-  const renderSalaryRanges = () => (
-    <div className="salary-container">
+  const renderSalaryRangesTypes = () => (
+    <>
       <h1 className="filter-heading">Salary Range</h1>
-      <ul className="salary-list">{renderSalaryRangesList()}</ul>
-    </div>
+      <ul className="filters-list">{renderSalaryRangesList()}</ul>
+    </>
   )
-
-  /* ---------- FINAL RENDER ---------- */
 
   return (
     <div className="filters-group-container">
-      {renderSearchInput()}
       {renderEmploymentTypes()}
-      {renderSalaryRanges()}
+      <hr className="separator" />
+      {renderSalaryRangesTypes()}
     </div>
   )
 }
