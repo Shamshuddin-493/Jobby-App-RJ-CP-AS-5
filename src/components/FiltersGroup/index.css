@@ -1,0 +1,28 @@
+.filters-group-container {
+  margin-top: 5px;
+  width: 100%;
+}
+
+@media screen and (min-width: 768px) {
+  .filters-group-container {
+    width: 100%;
+  }
+}
+.filter-head {
+  font-weight: 500;
+  font-size: 20px;
+}
+.filter-type-container {
+  margin-bottom: 16px;
+}
+.label-filter {
+  margin-left: 7px;
+}
+.salary-range-container {
+  list-style-type: none;
+  padding: 0;
+}
+.type-list-container {
+  list-style-type: none;
+  padding: 0;
+}

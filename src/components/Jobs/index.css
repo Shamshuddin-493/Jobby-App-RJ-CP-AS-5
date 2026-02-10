@@ -1,0 +1,7 @@
+.job-sections {
+  display: flex;
+  justify-content: center;
+  margin: auto;
+  background-color: #000000;
+  color: #ffffff;
+}

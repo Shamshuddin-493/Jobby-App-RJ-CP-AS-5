@@ -1,0 +1,105 @@
+.all-job-section {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  min-height: 100vh;
+}
+.left-container {
+  width: 100%;
+  padding-bottom: 50px;
+}
+
+@media screen and (min-width: 768px) {
+  .all-job-section {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  .left-container {
+    width: 30%;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    max-height: 100vh;
+    overflow-y: auto;
+    padding-top: 15px;
+    padding-right: 20px;
+  }
+  .right-container {
+    width: 70%;
+    padding-left: 20px;
+  }
+}
+
+.right-container {
+  width: 100%;
+}
+.job-search-container2 {
+  display: none;
+}
+
+hr {
+  color: #64748b;
+  margin-top: 30px;
+}
+@media screen and (min-width: 768px) {
+  .job-search-container {
+    display: none;
+  }
+  .job-search-container2 {
+    display: block;
+    width: 45%;
+  }
+}
+
+.no-jobs-view {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.no-jobs-img {
+  width: 60%;
+}
+
+@media screen and (min-width: 768px) {
+  .no-jobs-view {
+    margin-top: 50px;
+  }
+}
+
+.jobs-error-view-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.jobs-failure-img {
+  width: 60%;
+}
+
+@media screen and (min-width: 768px) {
+  .jobs-error-view-container {
+    margin-top: 50px;
+  }
+}
+
+.retry-btn {
+  background-color: #4f46e5;
+  color: #ffffff;
+  padding: 8px 16px 8px 16px;
+  border: none;
+  border-radius: 8px;
+}
+
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.job-list-container {
+  list-style-type: none;
+  padding: 0;
+}
