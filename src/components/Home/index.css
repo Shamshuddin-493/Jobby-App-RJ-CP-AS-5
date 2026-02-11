@@ -1,53 +1,74 @@
 .home-container {
-  background-image: url('https://assets.ccbp.in/frontend/react-js/home-sm-bg.png');
-  background-size: cover;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding-top: 30px;
+  min-height: 100vh;
+}
+.home-page {
+  flex-grow: 1;
+  background-size: cover;
+  padding: 20px;
+}
+.home-page-content {
+  max-width: 500px;
+}
+.home-heading {
+  color: #ffffff;
   font-family: 'Roboto';
-  width: 100%;
-  background-position: center;
-  min-height: 90vh;
-  padding-bottom: 50px;
+  font-size: 32px;
 }
-.home-text-container {
-  width: 90%;
-  color: #ffffff;
-}
-.heading {
-  font-size: 42px;
-}
-.description {
-  font-size: 20px;
-  line-height: 42px;
-}
-.btn-find-jobs {
-  background-color: #6366f1;
-  border: none;
-  color: #ffffff;
+.home-description {
+  color: #f1f5f9;
+  font-family: 'Roboto';
   font-size: 16px;
-  border-radius: 8px;
-  padding: 10px 15px;
-  cursor: pointer;
+  margin-top: 25px;
 }
-@media screen and (min-width: 768px) {
-  .home-container {
+.find-jobs-button {
+  background-color: #6366f1;
+  padding: 10px 18px;
+  border-radius: 10px;
+  color: #f8fafc;
+  font-family: 'Roboto';
+  font-size: 15px;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  margin-top: 10px;
+}
+@media (max-width: 575px) {
+  .home-page {
+    background-image: url('https://assets.ccbp.in/frontend/react-js/home-sm-bg.png');
+  }
+}
+@media (min-width: 576px) {
+  .home-page {
     background-image: url('https://assets.ccbp.in/frontend/react-js/home-lg-bg.png');
-    background-size: cover;
-    padding-left: 40px;
+    padding: 40px;
     padding-top: 50px;
-    background-position: center;
-    height: auto;
   }
-  .home-text-container {
-    width: 60%;
-    align-self: flex-start;
+}
+@media (min-width: 768px) {
+  .home-heading {
+    font-size: 40px;
+    font-weight: 800;
   }
-  .heading {
-    font-size: 72px;
+  .home-description {
+    font-size: 18px;
   }
-  .description {
-    font-size: 30px;
+  .find-jobs-button {
+    font-size: 15px;
+    padding: 12px 20px;
+  }
+}
+@media (min-width: 1200px) {
+  .home-heading {
+    font-size: 50px;
+    font-weight: 500;
+  }
+  .home-description {
+    font-size: 22px;
+  }
+  .find-jobs-button {
+    font-size: 18px;
+    padding: 14px 22px;
   }
 }
