@@ -1,18 +1,26 @@
+import {useRef} from 'react'
 import {BsSearch} from 'react-icons/bs'
 import './index.css'
 
-const SearchJob = props => {
-  const {searchInput, changeSearchInput, clickSearch} = props
-  const onSearchClick = () => {
-    clickSearch()
-  }
+const SearchJob = ({searchInput, changeSearchInput, clickSearch}) => {
+  const inputRef = useRef(null)
 
   const onChangeSearchInput = event => {
     changeSearchInput(event.target.value)
   }
+
+  const onSearchClick = () => {
+    if (searchInput.trim() === '') {
+      inputRef.current.focus()
+    } else {
+      clickSearch()
+    }
+  }
+
   return (
     <div className="search-input-container">
       <input
+        ref={inputRef}
         type="search"
         className="search-input"
         value={searchInput}
@@ -20,8 +28,8 @@ const SearchJob = props => {
         onChange={onChangeSearchInput}
       />
       <button
-        className="search-container"
         type="button"
+        className="search-container"
         data-testid="searchButton"
         onClick={onSearchClick}
       >
